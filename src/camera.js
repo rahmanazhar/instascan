@@ -1,5 +1,5 @@
 function cameraName(label) {
-  let clean = label.replace(/\s*\([0-9a-f]+(:[0-9a-f]+)?\)\s*$/, '');
+  let clean = label.replace(/\s*\([0-9a-f]+(:[0-9a-f]+)?\)\s*$/, "");
   return clean || label || null;
 }
 
@@ -25,11 +25,16 @@ class Camera {
           sourceId: this.id,
           minWidth: 600,
           maxWidth: 800,
-          minAspectRatio: 1.6
+          minAspectRatio: 1.6,
         },
-        optional: []
-      }
+        optional: [],
+      },
     };
+
+    var userAgent = window.navigator.userAgent;
+    if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
+      constraints.video.facingMode = "environment";
+    }
 
     this._stream = await Camera._wrapErrors(async () => {
       return await navigator.mediaDevices.getUserMedia(constraints);
@@ -55,8 +60,8 @@ class Camera {
 
     let devices = await navigator.mediaDevices.enumerateDevices();
     return devices
-      .filter(d => d.kind === 'videoinput')
-      .map(d => new Camera(d.deviceId, cameraName(d.label)));
+      .filter((d) => d.kind === "videoinput")
+      .map((d) => new Camera(d.deviceId, cameraName(d.label)));
   }
 
   static async _ensureAccess() {
